@@ -1,0 +1,126 @@
+
+<div class="columns is-multiline">
+    <div class="column is-one-third" *ngFor="let news of newsList">
+      <div class="card">
+        <div class="card-image" (click)="openNewsCardDetail(news.key)"  >
+          <figure class="image">
+            <img src="{{news.news_photo_url}}" alt="Placeholder image">
+          </figure>
+        </div>
+        <div class="card-content">
+            <div class="media">
+                <div class="media-left">
+                  <figure class="image is-48x48">
+                    <img src="{{news.news_author_photo_url}}" alt="linda barret avatar
+                    ">
+                  </figure>
+                </div>
+                <div class="media-content">
+                  <p class="title is-6">{{news.news_author_name}}</p>
+                  <!-- <p class="subtitle is-6">{{news.news_author_email}}</p> -->
+                  <p class="subtitle is-6">user type</p>
+                </div>
+              </div>
+          <div class="content" >
+            <h4  class="title is-4">{{news.news_title}}</h4>
+            <p>{{news.news_content | slice: 0: 145}} ...</p>
+            <span class="button is-link modal-button" (click)="openNewsDialogUpdate(news.key)">
+                <span class="icon">
+                  <i class="fa fa-pencil"></i>
+                </span>
+                <span>Update</span>
+              </span>
+              <span class="button is-danger modal-button is-pulled-right" (click)="deleteNewsObj(news.key)">
+                  <span class="icon">
+                    <i class="fa fa-trash"></i>
+                  </span>
+                  <span>Delete</span>
+                </span>
+          </div>
+        </div>
+      </div>
+    </div> 
+
+    
+
+  <div class="modal" [ngClass]="{'is-active': isNewsCardOpen}">
+    <div class="modal-background" (click)="closeNewsCardDetail()"></div>
+    <div class="modal-content is-tiny">
+      <!-- content -->
+      <div class="card" *ngIf="newsObj">
+        <div class="card-image">
+          <figure class="image is-4by3">
+            <img src="{{newsObj.news_photo_url}}" alt="Placeholder image">
+          </figure>
+        </div>
+        <div class="card-content">
+          <div class="media">
+            <div class="media-left">
+              <figure class="image is-48x48">
+                <img src="{{newsObj.news_author_photo_url}}" alt="linda barret avatar
+                ">
+              </figure>
+            </div>
+            <div class="media-content">
+              <p class="title is-4">{{newsObj.news_author_name}}</p>
+              <p class="subtitle is-6">user type</p>
+            </div>
+          </div>
+          <div class="content">
+              <h4  class="subtitle is-4">{{newsObj.news_title}}</h4>
+              {{newsObj.news_content}}
+            <br>
+            <time datetime="2018-02-02">12:45 AM - 20 June 2018</time>
+          </div>
+        </div>
+      </div>
+      <!-- end content -->
+    </div>
+    <button class="modal-close is-large" aria-label="close" (click)="closeNewsCardDetail()"></button>
+  </div>
+
+
+
+
+
+<!--Modal create and edit-->
+<form (ngSubmit)="onSubmitUpdateNewsObj()" ngNativeValidate>
+    <div class="modal" [ngClass]="{'is-active': isNewsUpdateDialogOpen}">
+      <div class="modal-background"  (click)="closeNewsDialogUpdate()"></div>
+      <div class="modal-card" *ngIf="newsObj">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Update post</p>
+          <button class="delete" type="button" aria-label="close" (click)="closeNewsDialogUpdate()"></button>
+        </header>
+        <section class="modal-card-body">
+          <div class="field">
+            <label class="label">Title</label>
+            <div class="control">
+              <input class="input" name="news_title" type="text" placeholder="Title here"
+              [(ngModel)]="newsObj.news_title" maxlength="300" required>
+            </div>
+          </div>
+  
+          <div class="field">
+            <label class="label">Photo URL</label>
+            <div class="control">
+              <input class="input" name="news_photo_url" type="url" placeholder="photo url here"
+              [(ngModel)]="newsObj.news_photo_url" required>
+            </div>
+          </div>
+          <div class="field">
+              <label class="label">Content</label>
+              <div class="control">
+                <textarea class="textarea" name="news_content" type="text" rows="7" placeholder="Content here"
+                [(ngModel)]="newsObj.news_content" required></textarea>
+              </div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+          <button class="button is-success" type="submit">Update</button>
+          <button class="button" type="button" (click)="closeNewsDialogUpdate()">Cancel</button>
+        </footer>
+      </div>
+    </div>
+  </form>
+</div>
