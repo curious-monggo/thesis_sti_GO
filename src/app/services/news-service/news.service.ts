@@ -17,11 +17,11 @@ import { News } from '../../models/news/news';
 export class NewsService {
 
 	//list variables
-	newsListRef: AngularFireList<any>;
-  newsList: Observable<any[]>;
+	newsListRef: AngularFireList<News>;
+  newsList: Observable<News[]>;
   
 	//object variables
-	newsObjRef: AngularFireObject<any>;
+	newsObjRef: AngularFireObject<News>;
   newsObj: Observable<News>;
   
   constructor(private afDB: AngularFireDatabase) {

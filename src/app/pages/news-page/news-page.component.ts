@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
 //Model
-import { News } from './../../models/news/news';
+import { News } from '../../models/news/news';
 import { User } from '../../models/user/user';
 
 //Service
-import { NewsService } from './../../services/news-service/news.service';
-import { AuthService } from './../../services/auth-service/auth.service';
+import { NewsService } from '../../services/news-service/news.service';
+import { AuthService } from '../../services/auth-service/auth.service';
 
 
 @Component({
@@ -18,9 +18,9 @@ export class NewsPageComponent implements OnInit {
 
   isNewsDialogOpen:boolean = false;
 
-  newsList:any[];
+  newsList:News[];
 
-  newsObj = {
+  newsObj:News = {
 
     
     news_photo_url:'',

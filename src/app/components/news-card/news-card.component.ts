@@ -1,9 +1,9 @@
-import { News } from './../../models/news/news';
+import { News } from '../../models/news/news';
 import { Component, OnInit } from '@angular/core';
 
 //model
-import { NewsService } from './../../services/news-service/news.service';
-import { Subscription } from '../../../../node_modules/rxjs';
+import { NewsService } from '../../services/news-service/news.service';
+import { Subscription } from 'rxjs';
 
 //page
 
@@ -23,7 +23,7 @@ export class NewsCardComponent implements OnInit {
 
   newsObjId;
 
-  newsObj = {
+  newsObj:News = {
     news_photo_url:'',
     news_title:'',
     news_content:'',
@@ -54,19 +54,19 @@ export class NewsCardComponent implements OnInit {
   }
   getNewsObj(newsObjId:string){
     this.newsService.getNewsObj(newsObjId).subscribe(news => {
-      this.newsObj = {
-        news_photo_url:news.news_photo_url,
-        news_title:news.news_title,
-        news_content:news.news_content,
+      // this.newsObj = {
+      //   news_photo_url:news.news_photo_url,
+      //   news_title:news.news_title,
+      //   news_content:news.news_content,
 
-        news_timestamp_post_created:'',
+      //   news_timestamp_post_created:'',
     
-        news_author_id:news.news_author_id,
-        news_author_photo_url:news.news_author_photo_url,
-        news_author_name:news.news_author_name,
-        news_author_email:news.news_author_email
-      };
-
+      //   news_author_id:news.news_author_id,
+      //   news_author_photo_url:news.news_author_photo_url,
+      //   news_author_name:news.news_author_name,
+      //   news_author_email:news.news_author_email
+      // };
+      this.newsObj = news;
     });
     console.log(this.newsObj);
     console.log(this.newsObjId);
@@ -97,18 +97,7 @@ export class NewsCardComponent implements OnInit {
   }
   onSubmitUpdateNewsObj() {
     // console.log('Obj'+this.newsObj.()); 
-    this.newsObj = {
-      news_photo_url:this.newsObj.news_photo_url,
-      news_title:this.newsObj.news_title,
-      news_content:this.newsObj.news_content,
 
-      news_timestamp_post_created:'',
-  
-      news_author_id:this.newsObj.news_author_id,
-      news_author_photo_url:this.newsObj.news_author_photo_url,
-      news_author_name:this.newsObj.news_author_name,
-      news_author_email:this.newsObj.news_author_email
-    };
     console.log('id'+this.newsObjId);
     this.newsService.updateNewsObj(this.newsObjId, this.newsObj);
     this.closeNewsDialogUpdate();

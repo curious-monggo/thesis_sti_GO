@@ -1,10 +1,13 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
+//components
 import { AppComponent } from './app.component';
+import { NewsCardComponent } from './components/news-card/news-card.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 import { NewsPageComponent } from './pages/news-page/news-page.component';
+import { ProgramsPageComponent } from './pages/programs-page/programs-page.component';
 
 //Routes
 import { RouterModule, Routes} from '@angular/router';
@@ -18,10 +21,12 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
 
 //services
 import { AuthService } from './services/auth-service/auth.service';
-import { NewsCardComponent } from './components/news-card/news-card.component';
+
 
 //Form
 import { FormsModule } from '@angular/forms';
+import { ProgramsCardComponent } from './components/programs-card/programs-card.component';
+
 
   const appRoutes: Routes = [
     {
@@ -36,6 +41,10 @@ import { FormsModule } from '@angular/forms';
     {
       path: 'news',
       component: NewsPageComponent
+    },
+    {
+      path: 'programs',
+      component: ProgramsPageComponent
     },
     {
       path: '**',
@@ -60,7 +69,9 @@ import { FormsModule } from '@angular/forms';
     PageNotFoundComponent,
     NewsPageComponent,
     NavbarComponent,
-    NewsCardComponent
+    NewsCardComponent,
+    ProgramsPageComponent,
+    ProgramsCardComponent
   ],
   imports: [
     BrowserModule,

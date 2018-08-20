@@ -6,7 +6,7 @@ import { AngularFireDatabase, AngularFireList, AngularFireObject } from 'angular
 import { Observable, Subscription } from 'rxjs';
 import {map, first} from 'rxjs/operators'
 
-import { User } from './../../models/user/user';
+import { User } from '../../models/user/user';
 
 @Injectable({
   providedIn: 'root'

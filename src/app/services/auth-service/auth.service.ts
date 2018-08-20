@@ -6,7 +6,7 @@ import { auth } from 'firebase';
 import { Observable } from 'rxjs';
 
 //model
-import { User } from './../../models/user/user';
+import { User } from '../../models/user/user';
 
 //Router
 import { Router } from '@angular/router';
@@ -16,7 +16,7 @@ import { UserService } from '../user-service/user.service';
 
 
 //components
-import { NewsCardComponent } from './../../components/news-card/news-card.component';
+import { NewsCardComponent } from '../../components/news-card/news-card.component';
 
 @Injectable({
   providedIn: 'root'
