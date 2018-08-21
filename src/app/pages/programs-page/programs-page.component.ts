@@ -5,7 +5,10 @@ import { Program } from '../../models/program/program';
 
 //service
 import { AuthService } from '../../services/auth-service/auth.service';
+import { ProgramService } from './../../services/program-service/program.service';
 
+//component to set tab
+import { ProgramsCardComponent } from './../../components/programs-card/programs-card.component';
 
 @Component({
   selector: 'app-programs-page',
@@ -33,7 +36,9 @@ export class ProgramsPageComponent implements OnInit {
   };
 
   constructor(
-    private authService: AuthService
+    private authService: AuthService,
+    private programService: ProgramService,
+    private programCardComponent: ProgramsCardComponent
   ) { }
 
   ngOnInit() {
@@ -54,7 +59,24 @@ export class ProgramsPageComponent implements OnInit {
     this.programObj.program_author_name = this.authService.userObj.user_name;
     this.programObj.program_author_email = this.authService.userObj.user_email;
 
+    console.log(this.programType);
+    
 
+
+    if(this.programType == 'Course'){
+      this.programCardComponent.programCoursesTabSetToActive();
+      this.programService.addProgramCourseObj(this.programObj);
+      console.log('Course nga')
+      
+      this.closeProgramDialog();
+    } 
+    else if(this.programType == 'Track') {
+      this.programCardComponent.programTracksTabSetToActive();
+      this.programService.addProgramTrackObj(this.programObj);
+      console.log('Di Course')
+      
+      this.closeProgramDialog();
+    }
     
   }
 

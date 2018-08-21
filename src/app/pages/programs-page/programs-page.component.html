@@ -27,7 +27,8 @@
         <section class="modal-card-body">
           <div class="control has-icons-left">
             <div class="select">
-              <select required>
+              <select 
+              name="programType" [(ngModel)]="programType" required>
                 <option value="" disabled>Program type</option>
                 <option value="Course">Course</option>
                 <option value="Track">Track</option>

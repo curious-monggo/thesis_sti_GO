@@ -1,8 +1,12 @@
-import { News } from '../../models/news/news';
 import { Component, OnInit } from '@angular/core';
 
 //model
+import { News } from '../../models/news/news';
+
+//service
 import { NewsService } from '../../services/news-service/news.service';
+
+//for unsubscribing
 import { Subscription } from 'rxjs';
 
 //page
@@ -17,13 +21,13 @@ export class NewsCardComponent implements OnInit {
   isNewsCardOpen:boolean = false;
   isNewsUpdateDialogOpen:boolean = false;
 
-  newsList:any[];
+  newsList:News[];
 
   newsListSubscription:Subscription;
 
   newsObjId;
 
-  newsObj:News = {
+  newsObj = {
     news_photo_url:'',
     news_title:'',
     news_content:'',
@@ -49,24 +53,24 @@ export class NewsCardComponent implements OnInit {
   getNewsList() {
     this.newsListSubscription = this.newsService.getNewsList().
     subscribe(newsList => {
-      this.newsList= newsList;
+      this.newsList = newsList;
     });
   }
   getNewsObj(newsObjId:string){
     this.newsService.getNewsObj(newsObjId).subscribe(news => {
-      // this.newsObj = {
-      //   news_photo_url:news.news_photo_url,
-      //   news_title:news.news_title,
-      //   news_content:news.news_content,
+      this.newsObj = {
+        news_photo_url:news.news_photo_url,
+        news_title:news.news_title,
+        news_content:news.news_content,
 
-      //   news_timestamp_post_created:'',
+        news_timestamp_post_created:'',
     
-      //   news_author_id:news.news_author_id,
-      //   news_author_photo_url:news.news_author_photo_url,
-      //   news_author_name:news.news_author_name,
-      //   news_author_email:news.news_author_email
-      // };
-      this.newsObj = news;
+        news_author_id:news.news_author_id,
+        news_author_photo_url:news.news_author_photo_url,
+        news_author_name:news.news_author_name,
+        news_author_email:news.news_author_email
+      };
+      //this.newsObj = news;
     });
     console.log(this.newsObj);
     console.log(this.newsObjId);
@@ -76,6 +80,7 @@ export class NewsCardComponent implements OnInit {
   openNewsCardDetail(newsObjId:string) {
     this.isNewsCardOpen = true;
     this.newsObjId = newsObjId;
+    console.log(newsObjId);
     this.getNewsObj(newsObjId);
   }
   closeNewsCardDetail() {

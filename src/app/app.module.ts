@@ -8,6 +8,7 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 import { NewsPageComponent } from './pages/news-page/news-page.component';
 import { ProgramsPageComponent } from './pages/programs-page/programs-page.component';
+import { ProgramsCardComponent } from './components/programs-card/programs-card.component';
 
 //Routes
 import { RouterModule, Routes} from '@angular/router';
@@ -25,7 +26,8 @@ import { AuthService } from './services/auth-service/auth.service';
 
 //Form
 import { FormsModule } from '@angular/forms';
-import { ProgramsCardComponent } from './components/programs-card/programs-card.component';
+import { UserPageComponent } from './pages/user-page/user-page.component';
+
 
 
   const appRoutes: Routes = [
@@ -71,7 +73,8 @@ import { ProgramsCardComponent } from './components/programs-card/programs-card.
     NavbarComponent,
     NewsCardComponent,
     ProgramsPageComponent,
-    ProgramsCardComponent
+    ProgramsCardComponent,
+    UserPageComponent
   ],
   imports: [
     BrowserModule,
@@ -80,7 +83,7 @@ import { ProgramsCardComponent } from './components/programs-card/programs-card.
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFireAuthModule
   ],
-  providers: [AuthService, AngularFireDatabase, NewsCardComponent],
+  providers: [AuthService, AngularFireDatabase, NewsCardComponent, ProgramsCardComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

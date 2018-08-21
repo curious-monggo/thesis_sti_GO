@@ -5,7 +5,7 @@ import { AngularFireDatabase, AngularFireList, AngularFireObject } from 'angular
 
 //rxjs
 import { Observable } from 'rxjs';
-import {map} from 'rxjs/operators'
+import {map} from 'rxjs/operators';
 
 //news model
 import { News } from '../../models/news/news';
@@ -53,5 +53,4 @@ export class NewsService {
    deleteNewsObj(id:string){
     this.newsListRef.remove(id);
   }
-
 }

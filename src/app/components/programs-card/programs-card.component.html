@@ -1,6 +1,109 @@
 <div class="tabs">
-    <ul>
-      <li class="is-active"><a>Courses</a></li>
-      <li><a>Tracks</a></li>
-    </ul>
+  <ul>
+    <li (click)="programCoursesTabSetToActive()" [ngClass]="{'is-active': isProgramCourseTabActive}">
+      <a>Courses</a>
+    </li>
+    <li (click)="programTracksTabSetToActive()" [ngClass]="{'is-active': !isProgramCourseTabActive}">
+      <a>Tracks</a>
+    </li>
+  </ul>
+</div>
+
+
+<div class="columns is-multiline">
+  <div class="column is-one-third" *ngFor="let programObj of programList">
+    <div class="card">
+      <div class="card-image">
+        <figure class="image">
+          <img src="{{programObj.program_photo_url}}" alt="Placeholder image">
+        </figure>
+      </div>
+      <div class="card-content">
+        <div class="media">
+          <div class="media-left">
+            <figure class="image is-48x48">
+              <img class="is-rounded" src="{{programObj.program_author_photo_url}}" alt="linda barret avatar
+                    ">
+            </figure>
+          </div>
+          <div class="media-content">
+            <p class="title is-6">{{programObj.program_author_name}}</p>
+            <!-- <p class="subtitle is-6">{{news.news_author_email}}</p> -->
+            <p class="subtitle is-6">user type</p>
+          </div>
+        </div>
+        <div class="content">
+          <h4 class="title is-4">
+            <a href="{{programObj.program_page_url}}">{{programObj.program_acronym}}</a>
+          </h4>
+          <p>{{programObj.program_name | slice: 0: 145}}</p>
+          <span class="button is-link modal-button"
+          (click)="openProgramObjDialogUpdate(programObj.key)">
+            <span class="icon">
+              <i class="fa fa-pencil"></i>
+            </span>
+            <span>Update</span>
+          </span>
+          <span class="button is-danger modal-button is-pulled-right" 
+          (click)="deleteProgramObj(programObj.key)">
+            <span class="icon">
+              <i class="fa fa-trash"></i>
+            </span>
+            <span>Delete</span>
+          </span>
+        </div>
+      </div>
+    </div>
   </div>
+
+
+
+ <!--Modal create and edit-->
+<form (ngSubmit)="onSubmitUpdateProgramObj()" ngNativeValidate>
+    <div class="modal" [ngClass]="{'is-active': isProgramUpdateDialogOpen}">
+      <div class="modal-background"  (click)="closeProgramObjDialogUpdate()"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Update program</p>
+          <button class="delete" type="button" aria-label="close" (click)="closeProgramObjDialogUpdate()"></button>
+        </header>
+        <section class="modal-card-body">
+          <div class="field">
+            <label class="label">Acronym</label>
+            <div class="control">
+              <input class="input" name="program_acronym" type="text" placeholder="Acronym here"
+              [(ngModel)]="programObj.program_acronym" maxlength="300" required>
+            </div>
+          </div>
+  
+          <div class="field">
+            <label class="label">Name</label>
+            <div class="control">
+              <input class="input" name="program_name" type="text" placeholder="Name here"
+              [(ngModel)]="programObj.program_name" required>
+            </div>
+          </div>
+          <div class="field">
+              <label class="label">Page Url</label>
+              <div class="control">
+                <input class="input" name="program_page_url" type="url" placeholder="Page URL here"
+                [(ngModel)]="programObj.program_page_url" required>
+              </div>
+          </div>
+          <div class="field">
+              <label class="label">Photo Url</label>
+              <div class="control">
+                <input class="input" name="program_photo_url" type="url" placeholder="Page URL here"
+                [(ngModel)]="programObj.program_photo_url" required>
+              </div>
+          </div>
+
+        </section>
+        <footer class="modal-card-foot">
+          <button class="button is-success" type="submit">Update</button>
+          <button class="button" type="button" (click)="closeProgramObjDialogUpdate()">Cancel</button>
+        </footer>
+      </div>
+    </div>
+  </form>
+</div>

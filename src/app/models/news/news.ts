@@ -1,5 +1,5 @@
 export interface News {
-    // key?:string;
+    key?:string;
     news_photo_url?:string;
     
     news_title?:string;

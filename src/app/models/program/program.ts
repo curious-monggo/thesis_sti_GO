@@ -1,4 +1,5 @@
 export interface Program {
+    key?:string;
     program_acronym?:string;
     program_name?:string;
     program_page_url?:string;
