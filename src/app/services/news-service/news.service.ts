@@ -37,6 +37,7 @@ export class NewsService {
 
    getNewsList() {
     return this.newsList;
+    // console.log(this.newsList);
    }
 
    getNewsObj(id:string) {
