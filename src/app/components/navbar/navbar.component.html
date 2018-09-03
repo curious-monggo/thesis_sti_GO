@@ -11,11 +11,21 @@
   <a class="navbar-item" routerLink="/news">
     News
   </a>
+  <a class="navbar-item" routerLink="/events">
+    Events
+  </a>
   <a class="navbar-item" routerLink="/programs">
     Programs
   </a>
+  <a class="navbar-item" routerLink="/users">
+    Users
+  </a>
   <div class="navbar-end">
+
     <div class="navbar-item">
+      <figure class="image is-24x24">
+        <img class="is-rounded" src="{{userPhotoURL}}">
+      </figure>
       <a class="navbar-item" (click)="logOut()">
         Logout
       </a>

@@ -1,0 +1,66 @@
+
+<section class="container">
+    <div class="block">
+        <h1 class="title">
+            Calendar of events in STI PPC
+           </h1>
+           <a class="button is-primary" (click)="openEventsDialog()">
+            <span class="icon">
+              <i class="fa fa-plus"></i>
+            </span>
+            <span>Add new event</span>
+          </a>       
+    </div>
+    <a (click)="loadevents()"> loadevents</a>
+    <p>Display event : {{displayEvent | json}}</p>
+    <div *ngIf="calendarOptions">
+        <ng-fullcalendar #ucCalendar [options]="calendarOptions" (eventClick)="eventClick($event.detail)" (eventDrop)="updateEvent($event.detail)"
+            (eventResize)="updateEvent($event.detail)" (dayClick)="dayClick($event.detail)" (clickButton)="clickButton($event.detail)" [(eventsModel)]="events"></ng-fullcalendar>
+    </div>
+</section>
+
+
+
+<!-- Modal create and edit
+<form ngNativeValidate>
+  <div class="modal" [ngClass]="{'is-active': isEventsDialogOpen}">
+    <div class="modal-background"  (click)="closeEventsDialog()"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Create new event</p>
+        <button class="delete" type="button" aria-label="close" (click)="closeEventsDialog()"></button>
+      </header>
+      <section class="modal-card-body">
+        <div class="field">
+          <label class="label">Event title</label>
+          <div class="control">
+            <input class="input" name="news_title" type="text" placeholder="Month here, ex: 08"
+            [(ngModel)]="newsObj.news_title" maxlength="300" required>
+          </div>
+
+        </div>
+        <div class="field">
+          <label class="label">Date (MM-DD-YY)</label>
+          <div class="control">
+            <input class="input" name="news_title" type="text" placeholder="Month here, ex: 08"
+            [(ngModel)]="newsObj.news_title" maxlength="300" required>
+          </div>
+          <div class="control">
+            <input class="input" name="news_title" type="text" placeholder="Day here"
+            [(ngModel)]="newsObj.news_title" maxlength="300" required>
+          </div>
+          <div class="control">
+            <input class="input" name="news_title" type="text" placeholder="Year here"
+            [(ngModel)]="newsObj.news_title" maxlength="300" required>
+          </div>
+        </div>
+
+
+      </section>
+      <footer class="modal-card-foot">
+        <button class="button is-success" type="submit">Create</button>
+        <button class="button" type="button" (click)="closeEventsDialog()">Cancel</button>
+      </footer>
+    </div>
+  </div>
+</form> -->

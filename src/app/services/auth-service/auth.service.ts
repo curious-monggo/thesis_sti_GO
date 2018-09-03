@@ -86,6 +86,7 @@ export class AuthService {
       .catch(error => console.log(error));
   }
   logOut(){
+    //need to wrap in an if for catching undefined values
     this.newsCardComponent.newsListSubscription.unsubscribe();
     this.userService.userObjSubscription.unsubscribe();
     this.afAuth.auth.signOut();

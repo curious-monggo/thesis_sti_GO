@@ -1,6 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
+
+
 //components
 import { AppComponent } from './app.component';
 import { NewsCardComponent } from './components/news-card/news-card.component';
@@ -27,7 +29,12 @@ import { AuthService } from './services/auth-service/auth.service';
 //Form
 import { FormsModule } from '@angular/forms';
 import { UserPageComponent } from './pages/user-page/user-page.component';
+import { UsersPageComponent } from './pages/users-page/users-page.component';
+import { UsersItemComponent } from './components/users-item/users-item.component';
+import { EventsPageComponent } from './pages/events-page/events-page.component';
 
+//full calendar
+import { FullCalendarModule } from 'ng-fullcalendar';
 
 
   const appRoutes: Routes = [
@@ -45,8 +52,16 @@ import { UserPageComponent } from './pages/user-page/user-page.component';
       component: NewsPageComponent
     },
     {
+      path: 'events',
+      component: EventsPageComponent
+    },
+    {
       path: 'programs',
       component: ProgramsPageComponent
+    },
+    {
+      path: 'users',
+      component: UsersPageComponent
     },
     {
       path: '**',
@@ -74,14 +89,18 @@ import { UserPageComponent } from './pages/user-page/user-page.component';
     NewsCardComponent,
     ProgramsPageComponent,
     ProgramsCardComponent,
-    UserPageComponent
+    UserPageComponent,
+    UsersPageComponent,
+    UsersItemComponent,
+    EventsPageComponent
   ],
   imports: [
     BrowserModule,
     RouterModule.forRoot(appRoutes),
     FormsModule,
     AngularFireModule.initializeApp(firebaseConfig),
-    AngularFireAuthModule
+    AngularFireAuthModule,
+    FullCalendarModule
   ],
   providers: [AuthService, AngularFireDatabase, NewsCardComponent, ProgramsCardComponent],
   bootstrap: [AppComponent]

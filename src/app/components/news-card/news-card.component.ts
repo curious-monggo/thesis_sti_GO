@@ -58,12 +58,19 @@ export class NewsCardComponent implements OnInit {
   }
   getNewsObj(newsObjId:string){
     this.newsService.getNewsObj(newsObjId).subscribe(news => {
+      // let msPerMinute = 60 * 1000;
+       let elapsed = news.news_timestamp_post_created;
+      // let time = Math.round(elapsed/msPerMinute) + ' minutes ago';
+      console.log(elapsed);
+      
+      let tempDate = new Date(elapsed);
+      let timeAgo = tempDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true, month: 'short', day: 'numeric', year: 'numeric' });
       this.newsObj = {
         news_photo_url:news.news_photo_url,
         news_title:news.news_title,
         news_content:news.news_content,
 
-        news_timestamp_post_created:'',
+        news_timestamp_post_created:timeAgo,
     
         news_author_id:news.news_author_id,
         news_author_photo_url:news.news_author_photo_url,

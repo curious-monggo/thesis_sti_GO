@@ -10,6 +10,8 @@ import {map} from 'rxjs/operators';
 //news model
 import { News } from '../../models/news/news';
 
+import * as firebase from 'firebase';
+
 
 @Injectable({
   providedIn: 'root'
@@ -46,7 +48,12 @@ export class NewsService {
      return this.newsObj;
    }
    addNewsObj(newsObj:News) {
-    this.newsListRef.push(newsObj);
+    this.newsListRef.push(newsObj).then((snap) => {
+      const key = snap.key;
+      console.log(key);
+      // let datestampRef = this.afDB.list('news/'+key);
+      this.newsListRef.update(key, {news_timestamp_post_created: firebase.database.ServerValue.TIMESTAMP});
+    });
    }
    updateNewsObj(id:string, newsObj:News){
     this.newsListRef.update(id, newsObj);

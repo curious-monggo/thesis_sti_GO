@@ -9,11 +9,15 @@ import { AuthService } from '../../services/auth-service/auth.service';
 })
 export class NavbarComponent implements OnInit {
   isLogin:boolean = true;
+  userPhotoURL;
   constructor(
     private authService: AuthService
-  ) { }
+  ) { 
+
+  }
   
   ngOnInit() {
+
 
   }
   logOut() {

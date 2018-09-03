@@ -5,7 +5,7 @@ export interface News {
     news_title?:string;
     news_content?:string;
 
-    news_timestamp_post_created?:string;
+    news_timestamp_post_created?:any;
 
     news_author_id?:string;
     news_author_name?:string;

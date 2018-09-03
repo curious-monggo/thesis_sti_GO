@@ -1,0 +1,55 @@
+<div class="tabs">
+  <ul>
+    <li [ngClass]="{'is-active': true}">
+      <a>Students</a>
+    </li>
+  </ul>
+</div>
+
+<table class="table is-hoverable is-fullwidth">
+  <thead>
+    <tr>
+      <th>Student Number</th>
+      <th>Student First Name</th>
+      <th>Student Middle Name</th>
+      <th>Student Last Name</th>
+      <th>Student Program</th>
+      <th>Year level</th>
+ 
+    </tr>
+  </thead>
+  <tfoot>
+    <tr>
+      <th>Student Number</th>
+      <th>Student First Name</th>
+      <th>Student Middle Name</th>
+      <th>Student Last Name</th>
+      <th>Student Program</th>
+      <th>Year level</th>
+      <!-- <th>Options</th> -->
+    </tr>
+  </tfoot>
+  <tbody>
+    <tr *ngFor="let student of studentList">
+      <th><a href="#">{{student.student_id_number}}</a></th>
+      <td>{{student.student_first_name}}</td>
+      <td>{{student.student_middle_name}}</td>
+      <td>{{student.student_last_name}}</td>
+      <td>{{student.student_program}}</td>
+      <td>{{student.student_year_level}}</td>
+      <div class="buttons">
+        <a class="button is-success">
+          <span class="icon">
+            <i class="fa fa-pencil"></i>
+          </span>
+        </a>
+        <a class="button is-danger">
+          <span class="icon">
+            <i class="fa fa-trash"></i>
+          </span>
+        </a>      
+      </div>
+
+    </tr>
+  </tbody>
+</table>
