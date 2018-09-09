@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
+//Storage
+import { AngularFireStorage } from 'angularfire2/storage';
+
 //model
 import { News } from '../../models/news/news';
 
@@ -7,9 +10,10 @@ import { News } from '../../models/news/news';
 import { NewsService } from '../../services/news-service/news.service';
 
 //for unsubscribing
-import { Subscription } from 'rxjs';
+import { Subscription, Observable, of } from 'rxjs';
 
-//page
+//for form reset
+import { NgForm } from '@angular/forms';
 
 
 @Component({
@@ -20,19 +24,24 @@ import { Subscription } from 'rxjs';
 export class NewsCardComponent implements OnInit {
   isNewsCardOpen:boolean = false;
   isNewsUpdateDialogOpen:boolean = false;
+  isNewsConfirmDeleteDialogOpen = false;
+  isNewsDialogFormButtonDisabled = true;
+  isNewsImageAvailable = true;
 
-  newsList:News[];
+  newsCollection:News[];
 
-  newsListSubscription:Subscription;
+  newsCollectionSubscription:Subscription;
 
-  newsObjId;
+  newsDocumentId;
 
-  newsObj = {
+
+  newsDocument = {
+    news_photo_name:'',
     news_photo_url:'',
     news_title:'',
     news_content:'',
 
-    news_timestamp_post_created:'',
+
 
     news_author_id:'',
     news_author_photo_url:'',
@@ -40,88 +49,175 @@ export class NewsCardComponent implements OnInit {
     news_author_email:''
   };
 
+  uploadPercent: Observable<number>;
+  file:any;
+  fileName;
+  fileRef;
+  dateTime;
+
+
+
   constructor(
     private newsService: NewsService,
+    private storage: AngularFireStorage
   ) {
-    this.getNewsList();
+
     
   }
 
-  ngOnInit() {
+  ngOnInit(){
+    this.getNewsCollection();
   }
 
-  getNewsList() {
-    this.newsListSubscription = this.newsService.getNewsList().
-    subscribe(newsList => {
-      this.newsList = newsList;
+  test(){
+    console.log('Please reload');
+  }
+
+  getNewsCollection() {
+    this.newsCollectionSubscription = this.newsService.getNewsCollection().
+    subscribe(newsCollection => {
+      this.newsCollection = newsCollection;
+      console.log('test',newsCollection);
     });
   }
-  getNewsObj(newsObjId:string){
-    this.newsService.getNewsObj(newsObjId).subscribe(news => {
-      // let msPerMinute = 60 * 1000;
-       let elapsed = news.news_timestamp_post_created;
-      // let time = Math.round(elapsed/msPerMinute) + ' minutes ago';
-      console.log(elapsed);
-      
-      let tempDate = new Date(elapsed);
-      let timeAgo = tempDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true, month: 'short', day: 'numeric', year: 'numeric' });
-      this.newsObj = {
-        news_photo_url:news.news_photo_url,
-        news_title:news.news_title,
-        news_content:news.news_content,
+  getNewsDocument(newsDocumentId:string){
+    this.newsService.getNewsDocument(newsDocumentId).subscribe(newsDocument => {
 
-        news_timestamp_post_created:timeAgo,
+      console.log('getnewsdicid',newsDocumentId);
+      this.newsDocumentId = newsDocumentId;
+
+      let dateCreated = new Date(newsDocument.news_timestamp_post_created.toDate());
+      let convertDateToLocale = dateCreated.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true, month: 'short', day: 'numeric', year: 'numeric' });
+      console.log(dateCreated);
+
+      this.dateTime = convertDateToLocale;
+
+      this.newsDocument = {
+        news_photo_name:newsDocument.news_photo_name,
+        news_photo_url:newsDocument.news_photo_url,
+        news_title:newsDocument.news_title,
+        news_content:newsDocument.news_content,
+
+        // news_timestamp_post_created:newsDocument.news_timestamp_post_created,
     
-        news_author_id:news.news_author_id,
-        news_author_photo_url:news.news_author_photo_url,
-        news_author_name:news.news_author_name,
-        news_author_email:news.news_author_email
+        news_author_id:newsDocument.news_author_id,
+        news_author_photo_url:newsDocument.news_author_photo_url,
+        news_author_name:newsDocument.news_author_name,
+        news_author_email:newsDocument.news_author_email
       };
       //this.newsObj = news;
+      console.log('url', this.newsDocument.news_author_photo_url);
     });
-    console.log(this.newsObj);
-    console.log(this.newsObjId);
 
     
   }
-  openNewsCardDetail(newsObjId:string) {
+  onChangeImageHandler(event) {
+    this.isNewsDialogFormButtonDisabled = true;
+    this.fileRef = this.storage.ref('stiGo/news/'+this.newsDocumentId+'/'+this.newsDocument.news_photo_name).delete();
+
+    this.file = event.target.files[0];
+    this.fileName = event.target.files[0].name;
+
+    this.newsDocument.news_photo_name = this.fileName;
+
+    this.fileRef = this.storage.ref('stiGo/news/'+this.newsDocumentId+'/'+this.newsDocument.news_photo_name);
+
+    let task = this.fileRef.put(this.file);
+    this.uploadPercent = task.percentageChanges();
+    task.then(snapshot =>{
+      this.fileRef.getDownloadURL().subscribe(url =>{
+        if(url){
+          this.newsDocument.news_photo_url = url;
+          console.log(url);
+          this.isNewsDialogFormButtonDisabled = false;
+          return true;
+        }
+        
+
+        
+      }, (error)=>{
+          console.log('Error on get url, will delete',error);
+          this.storage.ref('stiGo/news/'+this.newsDocumentId+'/'+this.fileName).delete();
+          this.closeNewsDialogUpdate();
+          return of(false);
+      });
+    });
+  }
+
+  clearNewsDocOutput() {
+    this.newsDocument = {
+      news_photo_name:'',
+      news_photo_url:'',
+      news_title:'',
+      news_content:'',
+  
+      // news_timestamp_post_created:'',
+  
+      news_author_id:'',
+      news_author_photo_url:'',
+      news_author_name:'',
+      news_author_email:''
+    };
+  }
+  openNewsCardDetail(newsDocumentId:string) {
     this.isNewsCardOpen = true;
-    this.newsObjId = newsObjId;
-    console.log(newsObjId);
-    this.getNewsObj(newsObjId);
+    this.newsDocumentId = newsDocumentId;
+    console.log(newsDocumentId);
+    this.getNewsDocument(newsDocumentId);
   }
   closeNewsCardDetail() {
     this.isNewsCardOpen = false;
-
-
+    this.clearNewsDocOutput();
     //setting to null creates errors. minor fix needed. patch for now
   }
+  hideImage(){
+    this.isNewsImageAvailable = false;
+  }
+  showImage(){
+    this.isNewsImageAvailable = true;
+  }
 
-  openNewsDialogUpdate(newsObjId:string) {
+  openNewsDialogUpdate(newsDocumentId:string) {
     this.isNewsUpdateDialogOpen = true;
-    this.newsObjId = newsObjId;
+    this.isNewsDialogFormButtonDisabled = false;
+    this.newsDocumentId = newsDocumentId;
     // this.newsPageComponent.getNewsObj(newsId);
-    this.getNewsObj(newsObjId);
+    this.getNewsDocument(newsDocumentId);
   }
   closeNewsDialogUpdate() {
-    this.isNewsUpdateDialogOpen = false;
-    this.newsObj = null;
-  }
-  onSubmitUpdateNewsObj() {
-    // console.log('Obj'+this.newsObj.()); 
+    this.uploadPercent = null;
+    this.file = null;
+    this.fileName = null;
 
-    console.log('id'+this.newsObjId);
-    this.newsService.updateNewsObj(this.newsObjId, this.newsObj);
-    this.closeNewsDialogUpdate();
-  }
-
-
-
-  deleteNewsObj(newsObjId:string) {
-    this.newsService.deleteNewsObj(newsObjId);
-  }
-  trigger() {
-    console.log('pindot');
-  }
   
+    this.fileRef = null;
+    this.newsDocumentId = null;
+    this.isNewsUpdateDialogOpen = false;
+    
+  }
+
+  openNewsConfirmDeleteDialog(newsDocumentId:string) {
+    this.getNewsDocument(newsDocumentId);
+    this.isNewsConfirmDeleteDialogOpen = true;
+    this.newsDocumentId = newsDocumentId;
+    console.log(newsDocumentId);
+  }
+  closeNewsConfirmDeleteDialog() {
+    this.isNewsConfirmDeleteDialogOpen = false;
+  }
+  onSubmitUpdateNewsDocument(newsForm: NgForm) {
+    console.log('id'+this.newsDocumentId);
+    this.newsService.updateNewsDocument(this.newsDocumentId, this.newsDocument);
+    this.closeNewsDialogUpdate();
+    newsForm.reset();
+  }
+
+  deleteNewsDocument() {
+    this.newsService.deleteNewsDocument(this.newsDocumentId, this.newsDocument.news_photo_name);
+    this.closeNewsConfirmDeleteDialog();
+  }
+
+
+
+
 }

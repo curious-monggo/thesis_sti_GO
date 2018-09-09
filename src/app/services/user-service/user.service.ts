@@ -1,51 +1,56 @@
 import { Injectable } from '@angular/core';
-//AngularFire
-import { AngularFireDatabase, AngularFireList, AngularFireObject } from 'angularfire2/database';
 
-//Observable
+//AngularFire
+// old import { AngularFireDatabase, AngularFireList, AngularFireObject } from 'angularfire2/database';
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
+
+//rxjs
 import { Observable, Subscription } from 'rxjs';
-import {map, first} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 
 import { User } from '../../models/user/user';
+
+import * as firebase from 'firebase';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+
 	//list variables
-	usersListRef: AngularFireList<User>;
-	usersList: Observable<User[]>;//added client model
+	userCollectionRef: AngularFirestoreCollection<User>;
+  userCollection: Observable<User[]>;
+  
 	//object variables
-	userObjRef: AngularFireObject<User>;
-  userObj: Observable<User>;
+	userDocumentRef: AngularFirestoreDocument<User>;
+  userDocument: Observable<User>;
   userObjSubscription:Subscription;
   constructor(
-    private afDb: AngularFireDatabase
+    private afDb: AngularFirestore
   ) { 
-    this.usersListRef = this.afDb.list('users');
-    this.usersList = this.usersListRef.snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
-      )
-    );
-   
+    this.userCollectionRef = this.afDb.collection('users');
+
   }
 
-  addUserObj(userID:string, userObj:User){
-    this.userObjRef = this.afDb.object(`users/${userID}`);
-    this.userObj = this.userObjRef.valueChanges();
-    this.userObjSubscription = this.userObj.subscribe((obj) => {
+  // getUserCollection(){
 
-      if(obj){
-        console.log('meron');
-        this.userObjRef.update(userObj);
+  // }
 
+  addUserDocument(userID:string, userDocument:User){
+    this.userDocumentRef = this.afDb.doc(`users/${userID}`);
+    this.userDocument = this.userDocumentRef.valueChanges();
+    this.userObjSubscription = this.userDocument.subscribe((userDoc) => {
+      if(userDoc){
+        console.log('Old user');
+        if(userDoc !== userDocument){
+        //mahal to
+        this.userDocumentRef.update(userDocument);
+        }
       }
       else {
-        console.log('wala');
-        this.usersListRef.update(userID, userObj);
+        console.log('New user');
+        this.userDocumentRef.set(userDocument);
       }
     });
-
   }
 }

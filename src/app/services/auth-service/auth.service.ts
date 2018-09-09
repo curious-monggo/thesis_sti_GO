@@ -25,6 +25,7 @@ export class AuthService {
   authState;
   user_name;
   userKey;
+  photo;
 
   userObj: User = {
     user_name: '',
@@ -50,9 +51,10 @@ export class AuthService {
         this.userObj.user_email = user.email;
         this.userObj.user_photo_url = user.photoURL;
         this.userKey = user.uid;
+        this.photo = user.photoURL;
         
         console.log(user);
-        this.userService.addUserObj(this.userKey, this.userObj);
+        this.userService.addUserDocument(this.userKey, this.userObj);
         this.router.navigateByUrl('/news');
       } 
       else {
@@ -87,8 +89,8 @@ export class AuthService {
   }
   logOut(){
     //need to wrap in an if for catching undefined values
-    this.newsCardComponent.newsListSubscription.unsubscribe();
-    this.userService.userObjSubscription.unsubscribe();
+    //this.newsCardComponent.newsCollectionSubscription.unsubscribe();
+    //this.userService.userObjSubscription.unsubscribe();
     this.afAuth.auth.signOut();
     
     this.router.navigateByUrl('/');

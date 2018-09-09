@@ -1,6 +1,7 @@
 export interface News {
-    key?:string;
+    id?:string;
     news_photo_url?:string;
+    news_photo_name?:string;
     
     news_title?:string;
     news_content?:string;

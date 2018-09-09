@@ -25,52 +25,69 @@
           <button class="delete" type="button" aria-label="close" (click)="closeProgramDialog()"></button>
         </header>
         <section class="modal-card-body">
-          <div class="control has-icons-left">
-            <div class="select">
-              <select 
-              name="programType" [(ngModel)]="programType" required>
-                <option value="" disabled>Program type</option>
-                <option value="Course">Course</option>
-                <option value="Track">Track</option>
-              </select>
-            </div>
-            <span class="icon is-left">
-              <i class="fa fa-graduation-cap"></i>
-            </span>
-          </div>
           <div class="field">
-            <label class="label">Acronym</label>
-            <div class="control">
-              <input class="input" name="program_acronym" type="text" placeholder="Acronym here"
-              [(ngModel)]="programObj.program_acronym" maxlength="300" required>
-            </div>
-          </div>
-  
-          <div class="field">
-            <label class="label">Name</label>
-            <div class="control">
-              <input class="input" name="program_name" type="text" placeholder="Name here"
-              [(ngModel)]="programObj.program_name" required>
-            </div>
-          </div>
-          <div class="field">
-              <label class="label">Page Url</label>
-              <div class="control">
-                <input class="input" name="program_page_url" type="url" placeholder="Page URL here"
-                [(ngModel)]="programObj.program_page_url" required>
-              </div>
-          </div>
-          <div class="field">
-              <label class="label">Photo Url</label>
-              <div class="control">
-                <input class="input" name="program_photo_url" type="url" placeholder="Page URL here"
-                [(ngModel)]="programObj.program_photo_url" required>
+            <label class="label">Program type</label>
+            <div class="control has-icons-left">
+                <div class="select">
+                  <select 
+                  name="programType" [(ngModel)]="programType" required>
+                    <option value="" disabled>Program type</option>
+                    <option value="courses">Course</option>
+                    <option value="tracks">Track</option>
+                  </select>
+                </div>
+                <span class="icon is-left">
+                  <i class="fa fa-graduation-cap"></i>
+                </span>
               </div>
           </div>
 
+          <ng-container *ngIf="programType">
+
+              <div class="field">
+                  <label class="label">Acronym</label>
+                  <div class="control">
+                    <input class="input" name="program_acronym" type="text" placeholder="Acronym here"
+                    [(ngModel)]="programDocument.program_acronym" maxlength="300" required>
+                  </div>
+                </div>
+        
+                <div class="field">
+                  <label class="label">Name</label>
+                  <div class="control">
+                    <input class="input" name="program_name" type="text" placeholder="Name here"
+                    [(ngModel)]="programDocument.program_name" required>
+                  </div>
+                </div>
+                <div class="field">
+                    <label class="label">Photo</label>
+                    <input type="file" accept="image/*" (change)="uploadHandler($event)" required>
+                  </div>
+                  <div class="field" *ngIf="uploadPercent">
+                    <progress class="progress is-success show-value" value="{{uploadPercent | async}}" max="100">{{uploadPercent | async}}%</progress>
+                  </div>
+                <div class="field">
+                    <label class="label">Page Url</label>
+                    <div class="control">
+                      <input class="input" name="program_page_url" type="url" placeholder="Page URL here"
+                      [(ngModel)]="programDocument.program_page_url" required>
+                    </div>
+                </div>
+                <!-- <div class="field">
+                    <label class="label">Photo Url</label>
+                    <div class="control">
+                      <input class="input" name="program_photo_url" type="url" placeholder="Page URL here"
+                      [(ngModel)]="programDocument.program_photo_url" required>
+                    </div>
+                </div> -->
+
+
+          </ng-container>
+
+
         </section>
         <footer class="modal-card-foot">
-          <button class="button is-success" type="submit">Add</button>
+          <button [disabled]="isProgramDialogFormButtonDisabled" class="button is-success" type="submit">Add</button>
           <button class="button" type="button" (click)="closeProgramDialog()">Cancel</button>
         </footer>
       </div>

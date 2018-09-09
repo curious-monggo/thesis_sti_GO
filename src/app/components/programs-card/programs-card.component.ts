@@ -1,13 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 
+//Storage
+import { AngularFireStorage } from 'angularfire2/storage';
+
 //model
 import { Program } from './../../models/program/program';
 
 //service
-import { ProgramService } from './../../services/program-service/program.service';
+import { CourseService } from '../../services/course-service/course.service';
+import { TrackService } from '../../services/track-service/track.service';
 
 //for unsubscribing
-import { Subscription } from 'rxjs';
+import { Subscription, Observable, of } from 'rxjs';
+
+//for form reset
+import { NgForm } from '@angular/forms';
+
 
 @Component({
   selector: 'app-programs-card',
@@ -18,21 +26,25 @@ export class ProgramsCardComponent implements OnInit {
 
   isProgramCourseTabActive:boolean = true;
   isProgramUpdateDialogOpen:boolean = false;
+  isProgramDialogFormButtonDisabled = true;
+  isProgramConfirmDeleteDialogOpen = false;
+  isProgramImageAvailable = true;
 
-  programList:Program[];
+  programCollection:Program[];
+
+  programCourseCollectionSubscription:Subscription;
+  programTrackCollectionSubscription:Subscription;
+
+  programDocumentId;
+  programType;
 
 
-  programCourseListSubscription:Subscription;
-  programTrackListSubscription:Subscription;
-
-  programObjId;
-
-
-  programObj:Program = {
+  programDocument:Program = {
+    program_photo_url:'',
+    program_photo_name:'',
     program_acronym:'',
     program_name:'',
     program_page_url:'',
-    program_photo_url:'',
 
     program_timestamp_post_created:'',
 
@@ -42,13 +54,22 @@ export class ProgramsCardComponent implements OnInit {
     program_author_photo_url:''
   };
 
+  
+  uploadPercent: Observable<number>;
+  file:any;
+  fileName;
+  fileRef;
+  dateTime;
+
   constructor(
-    private programService: ProgramService
+    private courseService: CourseService,
+    private trackService: TrackService,
+    private storage: AngularFireStorage
   ) {
     if(this.isProgramCourseTabActive == true){
-      this.getProgramCourseList();
+      this.getProgramCourseCollection();
     } else if(this.isProgramCourseTabActive == false){
-      this.getProgramTrackList();
+      this.getProgramTrackCollection();
     }
   }
 
@@ -56,111 +77,210 @@ export class ProgramsCardComponent implements OnInit {
   }
   programCoursesTabSetToActive() {
     this.isProgramCourseTabActive = true;
-    this.getProgramCourseList();
+    this.getProgramCourseCollection();
 
   }
   programTracksTabSetToActive() {
     this.isProgramCourseTabActive = false;
-    this.getProgramTrackList();
+    this.getProgramTrackCollection();
     
   }
 
-
-
-
-
-  getProgramCourseList() {
-    this.programCourseListSubscription = this.programService.getProgramCourseList().
-    subscribe(programCourseList => {
-      this.programList = programCourseList;
+  getProgramCourseCollection() {
+    this.programCourseCollectionSubscription = this.courseService.getCourseCollection().
+    subscribe(programCourseCollection => {
+      this.programCollection = programCourseCollection;
     });
   }
-  getProgramTrackList() {
-    this.programTrackListSubscription = this.programService.getProgramTrackList().
-    subscribe(programTrackList => {
-      this.programList = programTrackList;
+  getProgramTrackCollection() {
+    this.programTrackCollectionSubscription = this.trackService.getTrackCollection().
+    subscribe(programTrackCollection => {
+      this.programCollection = programTrackCollection;
     });
   }
 
   //get obj
-  getProgramCourseObj(programId:string) {
-    this.programService.getProgramCourseObj(programId).subscribe(program => {
-      this.programObj = {
-        program_acronym:program.program_acronym,
-        program_name:program.program_name,
-        program_page_url:program.program_page_url,
-        program_photo_url:program.program_photo_url,
+  getProgramCourseDocument(programId:string) {
+    this.courseService.getCourseDocument(programId).subscribe(courseDocument => {
+      this.programDocument = {
+        program_photo_url:courseDocument.program_photo_url,
+        program_photo_name:courseDocument.program_photo_name,
+
+        program_acronym:courseDocument.program_acronym,
+        program_name:courseDocument.program_name,
+        program_page_url:courseDocument.program_page_url,
+
+
     
         program_timestamp_post_created:'',
     
-        program_author_id:program.program_author_id,
-        program_author_name:program.program_author_name,
-        program_author_email:program.program_author_email,
-        program_author_photo_url:program.program_author_photo_url  
+        program_author_id:courseDocument.program_author_id,
+        program_author_name:courseDocument.program_author_name,
+        program_author_email:courseDocument.program_author_email,
+        program_author_photo_url:courseDocument.program_author_photo_url  
       };
+      console.log(this.programDocument);
     });
   }
-  getProgramTrackObj(programCourseId:string) {
-    this.programService.getProgramTrackObj(programCourseId).subscribe(programCourse => {
-      this.programObj = {
-        program_acronym:programCourse.program_acronym,
-        program_name:programCourse.program_name,
-        program_page_url:programCourse.program_page_url,
-        program_photo_url:programCourse.program_photo_url,
+  getProgramTrackDocument(programId:string) {
+    this.trackService.getTrackDocument(programId).subscribe(trackDocument => {
+      this.programDocument = {
+        program_photo_url:trackDocument.program_photo_url,
+        program_photo_name:trackDocument.program_photo_name,
+
+        program_acronym:trackDocument.program_acronym,
+        program_name:trackDocument.program_name,
+        program_page_url:trackDocument.program_page_url,
     
         program_timestamp_post_created:'',
     
-        program_author_id:programCourse.program_author_id,
-        program_author_name:programCourse.program_author_name,
-        program_author_email:programCourse.program_author_email,
-        program_author_photo_url:programCourse.program_author_photo_url  
+        program_author_id:trackDocument.program_author_id,
+        program_author_name:trackDocument.program_author_name,
+        program_author_email:trackDocument.program_author_email,
+        program_author_photo_url:trackDocument.program_author_photo_url  
       };
     });
   }
 
 
-
-
-  openProgramObjDialogUpdate(programObjId:string) {
-    this.isProgramUpdateDialogOpen = true;
-    this.programObjId = programObjId;
+  onChangeImageHandler(event) {
+    this.isProgramDialogFormButtonDisabled = true;
     if(this.isProgramCourseTabActive == true){
-      this.getProgramCourseObj(programObjId);
+      this.programType='courses';
+      console.log('course image');
     }
     else if(this.isProgramCourseTabActive == false){
-      this.getProgramTrackObj(programObjId);
+      this.programType='tracks';
+      console.log('track image');
+    }
+    console.log(this.programDocument.program_photo_name, 'is this undefined?');
+    
+    this.fileRef = this.storage.ref('stiGo/'+this.programType+'/'+this.programDocumentId+'/'+this.programDocument.program_photo_name).delete();
+
+    this.file = event.target.files[0];
+    this.fileName = event.target.files[0].name;
+
+    this.programDocument.program_photo_name = this.fileName;
+
+    this.fileRef = this.storage.ref('stiGo/'+this.programType+'/'+this.programDocumentId+'/'+this.programDocument.program_photo_name);
+
+    let task = this.fileRef.put(this.file);
+    this.uploadPercent = task.percentageChanges();
+    task.then(snapshot =>{
+      this.fileRef.getDownloadURL().subscribe(url =>{
+        if(url){
+          this.programDocument.program_photo_url = url;
+          console.log(url);
+          this.isProgramDialogFormButtonDisabled = false;
+          return true;
+        }
+        
+
+        
+      }, (error)=>{
+          console.log('Error on get url, will delete',error);
+          this.storage.ref('stiGo/'+this.programType+'/'+this.programDocumentId+'/'+this.fileName).delete();
+          this.closeProgramDocumentDialogUpdate();
+          return of(false);
+      });
+    });
+  }
+
+  openProgramDocumentDialogUpdate(programDocumentId:string) {
+    this.isProgramUpdateDialogOpen = true;
+    this.isProgramDialogFormButtonDisabled = false;
+    this.programDocumentId = programDocumentId;
+    if(this.isProgramCourseTabActive == true){
+      this.getProgramCourseDocument(programDocumentId);
+      console.log('onUpdate id course', programDocumentId);
+    }
+    else if(this.isProgramCourseTabActive == false){
+      this.getProgramTrackDocument(programDocumentId);
+      console.log('onUpdate id track', programDocumentId);
     }
   }
-  closeProgramObjDialogUpdate() {
+  closeProgramDocumentDialogUpdate() {
     this.isProgramUpdateDialogOpen = false;
-    this.programObj = null;
+    this.uploadPercent = null;
+    this.file = null;
+    this.fileName = null
+
+  
+    this.fileRef = null;
+    this.programDocumentId = null;
+    // this.programDocument = null; wrong practice
+    // this.programDocument = {
+    //   program_photo_url:'',
+    //   program_photo_name:'',
+    //   program_acronym:'',
+    //   program_name:'',
+    //   program_page_url:'',
+  
+    //   program_timestamp_post_created:'',
+  
+    //   program_author_id:'',
+    //   program_author_name:'',
+    //   program_author_email:'',
+    //   program_author_photo_url:''
+    // };
   }
-  onSubmitUpdateProgramObj() {
+  
+  hideImage(){
+    this.isProgramImageAvailable = false;
+  }
+  showImage(){
+    this.isProgramImageAvailable = true;
+  }
+  
+  openProgramConfirmDeleteDialog(programDocumentId:string,programDocumentPhotoName) {
+    if(this.isProgramCourseTabActive == true){
+      this.getProgramCourseDocument(programDocumentId);
+      this.isProgramConfirmDeleteDialogOpen = true;
+      this.programDocumentId = programDocumentId;
+      console.log(programDocumentId, programDocumentPhotoName, 'opemDelete');
+    }
+    else if(this.isProgramCourseTabActive == false){
+      this.getProgramTrackDocument(programDocumentId);
+      this.isProgramConfirmDeleteDialogOpen = true;
+      this.programDocumentId = programDocumentId;
+      console.log(programDocumentId);
+    }
+
+  }
+  closeProgramConfirmDeleteDialog() {
+    this.isProgramConfirmDeleteDialogOpen = false;
+  }
+  onSubmitUpdateProgramDocument(programForm: NgForm) {
     // console.log('Obj'+this.newsObj.()); 
     if(this.isProgramCourseTabActive == true){
-      this.programService.updateProgramCourseObj(this.programObjId, this.programObj);
+      this.courseService.updateCourseDocument(this.programDocumentId, this.programDocument);
     }
     else if(this.isProgramCourseTabActive == false){
-      this.programService.updateProgramTrackObj(this.programObjId, this.programObj);
+      this.trackService.updateTrackDocument(this.programDocumentId, this.programDocument);
     }
-    this.closeProgramObjDialogUpdate();
+    this.closeProgramDocumentDialogUpdate();
+    // programForm.reset(); 
   }
 
   
   //wrapper
-  deleteProgramObj(programObjId:string) {
+  deleteProgramDocument() {
     if(this.isProgramCourseTabActive == true){
-      this.deleteProgramCourseObj(programObjId);
+      this.deleteProgramCourseDocument();
     }
     else if(this.isProgramCourseTabActive == false){
-      this.deleteProgramTrackObj(programObjId);
+      this.deleteProgramTrackObj();
     }
   }
-  deleteProgramCourseObj(programObjId:string) {
+  deleteProgramCourseDocument() {
     //console.log(programObjId);
-    this.programService.deleteProgramCourseObj(programObjId);
+    console.log(this.programDocumentId, this.programDocument.program_photo_name);
+    this.courseService.deleteCourseDocument(this.programDocumentId, this.programDocument.program_photo_name);
+    this.closeProgramConfirmDeleteDialog();
   }
-  deleteProgramTrackObj(programTrackObjId:string) {
-    this.programService.deleteProgramTrackObj(programTrackObjId);
+  deleteProgramTrackObj() {
+    console.log(this.programDocumentId, this.programDocument.program_photo_name);
+    this.trackService.deleteTrackDocument(this.programDocumentId, this.programDocument.program_photo_name);
+    this.closeProgramConfirmDeleteDialog();
   }
 }

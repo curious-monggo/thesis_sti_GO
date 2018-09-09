@@ -1,3 +1,4 @@
+import { AngularFireDatabase } from 'angularfire2/database';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
@@ -17,10 +18,12 @@ import { RouterModule, Routes} from '@angular/router';
 import { NavbarComponent } from './components/navbar/navbar.component';
 
 //angularFire
+import { environment } from './../environments/environment';
 import { AngularFireModule } from 'angularfire2';
-import { AngularFireDatabaseModule, AngularFireDatabase } from 'angularfire2/database';
-
+import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { AngularFireStorageModule } from 'angularfire2/storage';
 import { AngularFireAuthModule } from 'angularfire2/auth';
+
 
 //services
 import { AuthService } from './services/auth-service/auth.service';
@@ -70,14 +73,7 @@ import { FullCalendarModule } from 'ng-fullcalendar';
     }
   ];
 
-  export const firebaseConfig = {
-    apiKey: "AIzaSyD6Rg5ux3fQi3OrwrWCHAEipaxrk3hB7EY",
-    authDomain: "stigo-6d063.firebaseapp.com",
-    databaseURL: "https://stigo-6d063.firebaseio.com",
-    projectId: "stigo-6d063",
-    storageBucket: "stigo-6d063.appspot.com",
-    messagingSenderId: "510666125923"
-  };
+
   
 @NgModule({
   declarations: [
@@ -97,10 +93,13 @@ import { FullCalendarModule } from 'ng-fullcalendar';
   imports: [
     BrowserModule,
     RouterModule.forRoot(appRoutes),
-    FormsModule,
-    AngularFireModule.initializeApp(firebaseConfig),
-    AngularFireAuthModule,
-    FullCalendarModule
+    FormsModule, 
+    AngularFireModule.initializeApp(environment.firebaseConfig, 'stiGoDashboard'),
+    AngularFirestoreModule, // imports firebase/firestore, only needed for database features
+    AngularFireAuthModule, // imports firebase/auth, only needed for auth features,
+    AngularFireStorageModule, // imports firebase/storage only needed for storage features
+    FullCalendarModule,
+    // AngularFirestoreModule.enablePersistence(),
   ],
   providers: [AuthService, AngularFireDatabase, NewsCardComponent, ProgramsCardComponent],
   bootstrap: [AppComponent]

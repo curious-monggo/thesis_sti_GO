@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 
 //AngularFire
-import { AngularFireDatabase, AngularFireList, AngularFireObject } from 'angularfire2/database';
+// old import { AngularFireDatabase, AngularFireList, AngularFireObject } from 'angularfire2/database';
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
+
+//Storage
+import { AngularFireStorage } from 'angularfire2/storage';
 
 //rxjs
 import { Observable } from 'rxjs';
@@ -19,46 +23,64 @@ import * as firebase from 'firebase';
 export class NewsService {
 
 	//list variables
-	newsListRef: AngularFireList<News>;
-  newsList: Observable<News[]>;
+	newsCollectionRef: AngularFirestoreCollection<News>;
+  newsCollection: Observable<News[]>;
   
 	//object variables
-	newsObjRef: AngularFireObject<News>;
-  newsObj: Observable<News>;
-  
-  constructor(private afDB: AngularFireDatabase) {
-    this.newsListRef = afDB.list('news');
+	newsDocumentRef: AngularFirestoreDocument<News>;
+  newsDocument: Observable<News>;
 
-    //use snapshot changes.map to store key
-    this.newsList = this.newsListRef.snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
-      )
-    );
+  uploadPercent: Observable<number>;
+  
+  constructor(
+    private afDB: AngularFirestore,
+    private storage: AngularFireStorage
+  ) {
+
    }
 
-   getNewsList() {
-    return this.newsList;
+   getNewsCollection() {
+    this.newsCollectionRef = this.afDB.collection('news', ref => ref.orderBy('news_timestamp_post_created', 'desc'));
+    this.newsCollection = this.newsCollectionRef.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as News;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+    return this.newsCollection;
     // console.log(this.newsList);
    }
 
-   getNewsObj(id:string) {
-     this.newsObjRef = this.afDB.object('news/'+id);
-     this.newsObj = this.newsObjRef.valueChanges();
-     return this.newsObj;
+   getNewsDocument(id:string) {
+     this.newsDocumentRef = this.afDB.doc(`news/${id}`);
+     this.newsDocument = this.newsDocumentRef.valueChanges();
+     return this.newsDocument;
    }
-   addNewsObj(newsObj:News) {
-    this.newsListRef.push(newsObj).then((snap) => {
-      const key = snap.key;
-      console.log(key);
-      // let datestampRef = this.afDB.list('news/'+key);
-      this.newsListRef.update(key, {news_timestamp_post_created: firebase.database.ServerValue.TIMESTAMP});
+   
+   addNewsDocument(newsDocumentID ,newsDocument:News) {
+
+    this.newsDocumentRef = this.afDB.doc(`news/${newsDocumentID}`);
+    this.newsDocumentRef.set(newsDocument)
+      .then((newsDocument) => {
+        console.log('ID of news doc added ', newsDocumentID);
+        this.newsDocumentRef = this.afDB.doc(`news/${newsDocumentID}`);
+
+        this.newsDocumentRef.update({news_timestamp_post_created: firebase.firestore.FieldValue.serverTimestamp()});
+    }).catch((error) =>{
+        console.log('Error on news doc add or update ', error)
     });
    }
-   updateNewsObj(id:string, newsObj:News){
-    this.newsListRef.update(id, newsObj);
+
+   updateNewsDocument(id:string, newsDocument:News){
+    this.newsDocumentRef = this.afDB.doc(`news/${id}`);
+    this.newsDocumentRef.update(newsDocument);
+    // this.newsListRef.update(id, newsObj);
   }
-   deleteNewsObj(id:string){
-    this.newsListRef.remove(id);
+   deleteNewsDocument(id:string, fileName){
+    this.newsDocumentRef = this.afDB.doc(`news/${id}`);
+    this.newsDocumentRef.delete()
+    this.storage.ref('stiGo/news/'+id+'/'+fileName).delete();
+    //this.newsListRef.remove(id);
   }
 }
