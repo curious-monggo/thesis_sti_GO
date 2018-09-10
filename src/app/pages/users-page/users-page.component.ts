@@ -19,7 +19,7 @@ export class UsersPageComponent implements OnInit {
 
   isStudentAlreadyInDB:boolean;
 
-  studentObj:Student={
+  studentDocument:Student={
     student_id_number:'',
     student_first_name:'',
     student_middle_name:'',
@@ -40,6 +40,7 @@ export class UsersPageComponent implements OnInit {
   }
   closeUsersDialog() {
     this.isUsersDialogOpen = false;
+    this.clearInput();
   }
   openNotification(){
     this.isStudentAlreadyInDB = true;
@@ -47,14 +48,25 @@ export class UsersPageComponent implements OnInit {
   closeNotification(){
     this.isStudentAlreadyInDB = false;
   }
+  clearInput(){
+    this.studentDocument = {
+      student_id_number:'',
+      student_first_name:'',
+      student_middle_name:'',
+      student_last_name:'',
+      student_program:'',
+      student_year_level:''
+    };
+  }
   onSubmitAddUser() {
     console.log('Before the stud in init');
-    let student_id_number = this.studentObj.student_id_number.toString();
-    console.log('after the stud in init '+this.studentObj.student_id_number);
-    console.log(this.studentObj);
-    this.studentService.checkIfStudentObj(student_id_number, this.studentObj);
+    let student_id_number = this.studentDocument.student_id_number.toString();
+    console.log('after the stud in init '+this.studentDocument.student_id_number);
+    console.log(this.studentDocument);
+    this.studentService.addStudentDocument(this.studentDocument);
     // this.studentService.studentObjSubscription.unsubscribe();
     this.closeUsersDialog();
+
     
   }
 }

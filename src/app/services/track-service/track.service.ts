@@ -66,8 +66,8 @@ export class TrackService {
 
         this.trackDocumentRef.update({program_timestamp_post_created: firebase.firestore.FieldValue.serverTimestamp()});
     }).catch((error) =>{
-        console.log('Error on track doc add or update ', error)
-    })
+        console.log('Error on track doc add or update ', error);
+    }); 
 
    }
    updateTrackDocument(id:string, trackDocument:Program){
@@ -77,12 +77,7 @@ export class TrackService {
    deleteTrackDocument(id:string, fileName){
     this.trackDocumentRef = this.afDB.doc(`tracks/${id}`);
     this.trackDocumentRef.delete()
-    // this.storage.ref('stiGo/tracks/'+id+'/'+fileName).delete();
+    this.storage.ref('stiGo/tracks/'+id+'/'+fileName).delete();
   }
-  // deleteNewsDocument(id:string, fileName){
-  //   this.newsDocumentRef = this.afDB.doc(`news/${id}`);
-  //   this.newsDocumentRef.delete()
-  //   this.storage.ref('stiGo/news/'+id+'/'+fileName).delete();
-    //this.newsListRef.remove(id);
-  // }
+
 }

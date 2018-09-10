@@ -15,21 +15,89 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./users-item.component.css']
 })
 export class UsersItemComponent implements OnInit {
-  studentList:Student[];
+  studentCollection:Student[];
+  isUsersUpdateDialogOpen:boolean = false;
+  studentIdNumber;
 
-  studentListSubscription:Subscription;
+
+  studentDocument:Student={
+    student_id_number:'',
+    student_first_name:'',
+    student_middle_name:'',
+    student_last_name:'',
+    student_program:'',
+    student_year_level:''
+  };
+
+
+  studentCollectionSubscription:Subscription;
   constructor(
     private studentService: StudentService
   ) { 
-    this.getStudentList();
+    this.getStudentCollection();
   }
 
   ngOnInit() {
   }
-  getStudentList() {
-    this.studentListSubscription = this.studentService.getStudentList().
-    subscribe(studentList => {
-      this.studentList = studentList;
+  getStudentCollection() {
+    this.studentCollectionSubscription = this.studentService.getStudentCollection().
+    subscribe(studentCollection => {
+      this.studentCollection = studentCollection;
     });
+  }
+  getStudentDocument(studentId:string){
+    this.studentService.getStudentDocument(studentId).subscribe(studentDoc => {
+
+      console.log('getstuddicid',studentId);
+      this.studentIdNumber = studentId;
+
+      // let dateCreated = new Date(newsDocument.news_timestamp_post_created.toDate());
+      // let convertDateToLocale = dateCreated.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true, month: 'short', day: 'numeric', year: 'numeric' });
+      // console.log(dateCreated);
+
+      // this.dateTime = convertDateToLocale;
+
+      this.studentDocument = {
+        student_id_number:studentDoc.student_id_number,   
+        student_first_name:studentDoc.student_first_name,
+        student_middle_name:studentDoc.student_middle_name,
+        student_last_name:studentDoc.student_last_name,
+        student_program:studentDoc.student_program,
+        student_year_level:studentDoc.student_year_level
+      };
+
+    });
+
+    
+  }
+  openUsersDialogUpdate(studentId:string) {
+    this.isUsersUpdateDialogOpen = true;
+    this.studentIdNumber = studentId;
+    // this.newsPageComponent.getNewsObj(newsId);
+    this.getStudentDocument(studentId);
+  }
+  closeUsersDialogUpdate() {
+    this.studentIdNumber = null;
+    this.isUsersUpdateDialogOpen = false;
+    
+  }
+  clearInput(){
+    this.studentDocument = {
+      student_id_number:'',
+      student_first_name:'',
+      student_middle_name:'',
+      student_last_name:'',
+      student_program:'',
+      student_year_level:''
+    };
+  }
+  onSubmitUpdateNewsDocument() {
+    console.log('id'+this.studentIdNumber);
+    this.studentService.updateStudentDoc(this.studentIdNumber, this.studentDocument);
+    this.closeUsersDialogUpdate();  
+    this.clearInput();
+  }
+  deleteStudentDocument(id){
+    this.studentService.deleteStudentDoc(id);
   }
 }

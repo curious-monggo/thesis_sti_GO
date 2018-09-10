@@ -76,12 +76,7 @@ export class CourseService {
    deleteCourseDocument(id:string, fileName){
     this.courseDocumentRef = this.afDB.doc(`courses/${id}`);
     this.courseDocumentRef.delete()
-    // this.storage.ref('stiGo/courses/'+id+'/'+fileName).delete();
+    this.storage.ref('stiGo/courses/'+id+'/'+fileName).delete();
   }
-  // deleteNewsDocument(id:string, fileName){
-  //   this.newsDocumentRef = this.afDB.doc(`news/${id}`);
-  //   this.newsDocumentRef.delete()
-  //   this.storage.ref('stiGo/news/'+id+'/'+fileName).delete();
-    //this.newsListRef.remove(id);
-  // }
+
 }

@@ -1,14 +1,17 @@
 import { Injectable } from '@angular/core';
+
 //AngularFire
-import { AngularFireDatabase, AngularFireList, AngularFireObject } from 'angularfire2/database';
+// old import { AngularFireDatabase, AngularFireList, AngularFireObject } from 'angularfire2/database';
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 
-//Observable
+//rxjs
 import { Observable, Subscription } from 'rxjs';
-import {map, first} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 
+//student model
 import { Student } from './../../models/student/student';
 
-//notif
+import * as firebase from 'firebase';
 
 
 @Injectable({
@@ -16,70 +19,116 @@ import { Student } from './../../models/student/student';
 })
 export class StudentService {
 	//list variables
-	studentListRef: AngularFireList<Student>;
-	studentList: Observable<Student[]>;//added client model
+	studentCollectionRef: AngularFirestoreCollection<Student>;
+  studentCollection: Observable<Student[]>;
+  
 	//object variables
-	studentObjRef: AngularFireObject<Student>;
-  studentObj: Observable<Student>;
-
+	studentDocumentRef: AngularFirestoreDocument<Student>;
+  studentDocument: Observable<Student>;
   studentObjSubscription:Subscription;
 
 
   constructor(
-    private afDb: AngularFireDatabase
+    private afDb: AngularFirestore
   ) {
-    this.studentListRef = this.afDb.list('students');
-    this.studentList = this.studentListRef.snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
-      )
+
+   }
+
+   getStudentCollection() {
+    this.studentCollectionRef = this.afDb.collection('students');
+    this.studentCollection = this.studentCollectionRef.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as Student;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
     );
+    return this.studentCollection;
    }
 
-   getStudentList() {
-    return this.studentList;
-    // console.log(this.newsList);
+   getStudentDocument(id:string) {
+     this.studentDocumentRef = this.afDb.doc(`students/${id}`);
+     this.studentDocument = this.studentDocumentRef.valueChanges();
+     return this.studentDocument;
    }
 
-   getStudentObj(id:string) {
-     this.studentObjRef = this.afDb.object('news/'+id);
-     this.studentObj = this.studentObjRef.valueChanges();
-     return this.studentObj;
-   }
-   addStudentObj(studentIdNumber:string, studentObj:Student) {
-    this.studentListRef.update(studentIdNumber, studentObj);
-   }
-   updateStudentObj(id:string, studentObj:Student){
-    this.studentListRef.update(id, studentObj);
+  //  addStudentDocument(studentIdNumber:string, studentDoc:Student){
+  //   this.studentDocumentRef = this.afDb.doc(`students/${studentIdNumber}`);
+  //   this.studentDocumentRef.set(studentDoc)
+  //     .then((studentDocument) => {
+  //       console.log('Id of student added', studentIdNumber);
+  //       this.studentDocumentRef = this.afDb.doc(`students/${studentIdNumber}`);
+
+  //       this.studentDocumentRef.update({student_timestamp_added: firebase.firestore.FieldValue.serverTimestamp()});
+  //     }).catch((error) =>{
+  //       console.log('Error on student doc add or update ', error);
+  //   });
+  //  }
+  //  addStudentDoc(studentIdNumber:string, studentObj:Student) {
+  //   this.studentCollectionRef.set(studentIdNumber, studentObj);
+  //  }
+   updateStudentDoc(id:string, studentDocument:Student){
+    this.studentDocumentRef = this.afDb.doc(`students/${id}`);
+    this.studentDocumentRef.update(studentDocument);
   }
-   deleteStudentObj(id:string){
-    this.studentListRef.remove(id);
+   deleteStudentDoc(id:string){
+    this.studentDocumentRef = this.afDb.doc(`students/${id}`);
+    this.studentDocumentRef.delete()
+    // this.studentColonRef.remove(id);
   }
   
+  addStudentDocument(studentDocument:Student){
+    this.studentCollectionRef = this.afDb
+    .collection('students', ref => 
+      ref.where('student_id_number', '==', studentDocument.student_id_number));
+      this.studentCollection = this.studentCollectionRef.valueChanges();
+      this.studentCollection.subscribe((studentColl) => {
+        if(studentColl.length >0){
+          console.log('Student is already in the system');
+          console.log(studentColl);
+        }
+        else {
+          console.log('new student');
+          this.studentCollectionRef.add(studentDocument);
+        }
+      });
+    // this.studentDocumentRef = this.afDb.doc(`students/${studentIdNumber}`);
+    // this.studentDocument = this.studentDocumentRef.valueChanges();
+
+    // this.studentDocument.subscribe((studentDoc) => {
+    //   if(studentDoc){
+    //     console.log('Student is already in the system');
+    //   }
+    //   else {
+    //     console.log('new student');
+    //     this.studentCollectionRef.add(studentDocument);
+    //   }
+    // });
+  }
   
   //Check if student already exists in database using the student id. Not based on names.
   //then add said student obj 
-  checkIfStudentObj(studentIdNumber:string, studentObj:Student) {
-    this.studentObjRef = this.afDb.object(`students/${studentIdNumber}`);
-    this.studentObj = this.studentObjRef.valueChanges();
-    console.log('Before subscription');
-    this.studentObjSubscription = this.studentObj.subscribe((obj) => {
-      console.log('After subscription');
+  // checkIfStudentDoc(studentIdNumber:string, studentObj:Student) {
+  //   this.studentObjRef = this.afDb.object(`students/${studentIdNumber}`);
+  //   this.studentObj = this.studentObjRef.valueChanges();
+  //   console.log('Before subscription');
+  //   this.studentObjSubscription = this.studentObj.subscribe((obj) => {
+  //     console.log('After subscription');
       
-      if(obj !==null){
+  //     if(obj !==null){
 
-        console.log('Student ID already exists');
-        this.studentObjSubscription.unsubscribe();
+  //       console.log('Student ID already exists');
+  //       this.studentObjSubscription.unsubscribe();
 
-      }
-      else {
-        console.log('Student ID does not exist');
-        this.addStudentObj(studentIdNumber, studentObj);
-        this.studentObjSubscription.unsubscribe();  
-      }
-    });
-    console.log('Check');
+  //     }
+  //     else {
+  //       console.log('Student ID does not exist');
+  //       this.addStudentObj(studentIdNumber, studentObj);
+  //       this.studentObjSubscription.unsubscribe();  
+  //     }
+  //   });
+  //   console.log('Check');
     //this.studentObjSubscription.unsubscribe();
-  }
+  // }
 
 }

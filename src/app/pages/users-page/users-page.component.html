@@ -33,7 +33,7 @@
         <div class="field">
           <label class="label">Student ID Number</label>
           <div class="control">
-            <input class="input" name="student_id_number" type="number" placeholder="Student Number here" [(ngModel)]="studentObj.student_id_number"
+            <input class="input" name="student_id_number" type="number" placeholder="Student Number here" [(ngModel)]="studentDocument.student_id_number"
               required>
           </div>
         </div>
@@ -41,44 +41,38 @@
         <div class="field">
           <label class="label">Student First Name</label>
           <div class="control">
-            <input class="input" name="student_first_name" type="text" placeholder="First name here" [(ngModel)]="studentObj.student_first_name"
+            <input class="input" name="student_first_name" type="text" placeholder="First name here" [(ngModel)]="studentDocument.student_first_name"
               required>
           </div>
         </div>
         <div class="field">
           <label class="label">Student Middle Name</label>
           <div class="control">
-            <input class="input" name="student_middle_name" type="text" placeholder="Mddle name here" [(ngModel)]="studentObj.student_middle_name"
+            <input class="input" name="student_middle_name" type="text" placeholder="Mddle name here" [(ngModel)]="studentDocument.student_middle_name"
               required>
           </div>
         </div>
         <div class="field">
           <label class="label">Student Last Name</label>
           <div class="control">
-            <input class="input" name="student_last_name" type="text" placeholder="Last name here" [(ngModel)]="studentObj.student_last_name"
+            <input class="input" name="student_last_name" type="text" placeholder="Last name here" [(ngModel)]="studentDocument.student_last_name"
               required>
           </div>
         </div>
 
         <div class="field">
-          <div class="control has-icons-left">
-            <div class="select">
-              <select name="student_program" [(ngModel)]="studentObj.student_program" required>
-                <option value="" disabled>Program type</option>
-                <option value="Course">Course</option>
-                <option value="Track">Strand</option>
-              </select>
-            </div>
-            <span class="icon is-left">
-              <i class="fa fa-graduation-cap"></i>
-            </span>
+          <label class="label">Student Program</label>
+          <div class="control">
+            <input class="input" name="student_program" type="text" placeholder="Program name here" [(ngModel)]="studentDocument.student_program"
+              required>
           </div>
         </div>
 
         <div class="field">
+            <label class="label">Student Year level</label>
           <div class="control has-icons-left">
             <div class="select">
-              <select name="student_year_level" [(ngModel)]="studentObj.student_year_level" required>
+              <select name="student_year_level" [(ngModel)]="studentDocument.student_year_level" required>
                 <option value="" disabled>Year level</option>
                 <option value="Grade 11">Grade 11</option>
                 <option value="Grade 12">Grade 12</option>
