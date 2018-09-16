@@ -9,6 +9,7 @@ import { StudentService } from './../../services/student-service/student.service
 //for unsubscribing
 import { Subscription } from 'rxjs';
 
+import * as hash from '../../../../node_modules/hashids/dist/hashids.min.js';
 @Component({
   selector: 'app-users-item',
   templateUrl: './users-item.component.html',
@@ -35,6 +36,7 @@ export class UsersItemComponent implements OnInit {
     private studentService: StudentService
   ) { 
     this.getStudentCollection();
+
   }
 
   ngOnInit() {
@@ -65,6 +67,11 @@ export class UsersItemComponent implements OnInit {
         student_program:studentDoc.student_program,
         student_year_level:studentDoc.student_year_level
       };
+
+      const hashids = new hash();
+      let id = hashids.encode(this.studentDocument.student_id_number);
+      let number = hashids.decode(id);
+      console.log(id, number[0]);
 
     });
 

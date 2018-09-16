@@ -8,7 +8,7 @@ import { User } from '../../models/user/user';
 //service
 import { AuthService } from '../../services/auth-service/auth.service';
 import { CourseService } from '../../services/course-service/course.service';
-import { TrackService } from './../../services/track-service/track.service';
+import { StrandService } from './../../services/strand-service/strand.service';
 
 //component to set tab
 import { ProgramsCardComponent } from './../../components/programs-card/programs-card.component';
@@ -64,7 +64,7 @@ export class ProgramsPageComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private courseService: CourseService,
-    private trackService: TrackService,
+    private strandService: StrandService,
     private programCardComponent: ProgramsCardComponent,
     private afDB: AngularFirestore,
     private storage: AngularFireStorage
@@ -153,10 +153,11 @@ export class ProgramsPageComponent implements OnInit {
       
       this.closeProgramDialog();
     } 
-    else if(this.programType == 'tracks') {
-      this.programCardComponent.programTracksTabSetToActive();
-      this.trackService.addTrackDocument(this.pushId, this.programDocument);
-      console.log('Di Course, track');
+    else if(this.programType == 'strands') {
+      console.log('if block');  
+      this.programCardComponent.programStrandsTabSetToActive();
+      this.strandService.addStrandDocument(this.pushId, this.programDocument);
+      console.log('Di Course, StrandS');
       
       this.closeProgramDialog();
     }
