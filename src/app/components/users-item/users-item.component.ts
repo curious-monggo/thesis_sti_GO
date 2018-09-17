@@ -9,7 +9,6 @@ import { StudentService } from './../../services/student-service/student.service
 //for unsubscribing
 import { Subscription } from 'rxjs';
 
-import * as hash from '../../../../node_modules/hashids/dist/hashids.min.js';
 @Component({
   selector: 'app-users-item',
   templateUrl: './users-item.component.html',
@@ -50,9 +49,6 @@ export class UsersItemComponent implements OnInit {
   getStudentDocument(studentId:string){
     this.studentService.getStudentDocument(studentId).subscribe(studentDoc => {
 
-      console.log('getstuddicid',studentId);
-      this.studentIdNumber = studentId;
-
       // let dateCreated = new Date(newsDocument.news_timestamp_post_created.toDate());
       // let convertDateToLocale = dateCreated.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true, month: 'short', day: 'numeric', year: 'numeric' });
       // console.log(dateCreated);
@@ -68,10 +64,6 @@ export class UsersItemComponent implements OnInit {
         student_year_level:studentDoc.student_year_level
       };
 
-      const hashids = new hash();
-      let id = hashids.encode(this.studentDocument.student_id_number);
-      let number = hashids.decode(id);
-      console.log(id, number[0]);
 
     });
 

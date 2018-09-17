@@ -13,7 +13,7 @@ import { Student } from './../../models/student/student';
 
 import * as firebase from 'firebase';
 
-
+import * as hash from '../../../../node_modules/hashids/dist/hashids.min.js';
 @Injectable({
   providedIn: 'root'
 })
@@ -52,21 +52,7 @@ export class StudentService {
      return this.studentDocument;
    }
 
-  //  addStudentDocument(studentIdNumber:string, studentDoc:Student){
-  //   this.studentDocumentRef = this.afDb.doc(`students/${studentIdNumber}`);
-  //   this.studentDocumentRef.set(studentDoc)
-  //     .then((studentDocument) => {
-  //       console.log('Id of student added', studentIdNumber);
-  //       this.studentDocumentRef = this.afDb.doc(`students/${studentIdNumber}`);
 
-  //       this.studentDocumentRef.update({student_timestamp_added: firebase.firestore.FieldValue.serverTimestamp()});
-  //     }).catch((error) =>{
-  //       console.log('Error on student doc add or update ', error);
-  //   });
-  //  }
-  //  addStudentDoc(studentIdNumber:string, studentObj:Student) {
-  //   this.studentCollectionRef.set(studentIdNumber, studentObj);
-  //  }
    updateStudentDoc(id:string, studentDocument:Student){
     this.studentDocumentRef = this.afDb.doc(`students/${id}`);
     this.studentDocumentRef.update(studentDocument);
@@ -89,7 +75,16 @@ export class StudentService {
         }
         else {
           console.log('new student');
-          this.studentCollectionRef.add(studentDocument);
+          this.studentCollectionRef.add(studentDocument).then(
+            studentDoc => {
+              const hashids = new hash('stiGo', 8, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890");
+              const code = hashids.encode(studentDocument.student_id_number);
+              
+              console.log(code);
+              let codeRef = this.afDb
+              .doc(`registration-code/${studentDoc.id}`).set({code:code});
+            })
+
         }
       });
     // this.studentDocumentRef = this.afDb.doc(`students/${studentIdNumber}`);

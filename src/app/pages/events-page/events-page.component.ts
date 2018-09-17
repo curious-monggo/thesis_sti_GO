@@ -1,11 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 
-//calendar component and options
-import { CalendarComponent } from 'ng-fullcalendar';
-import { Options } from 'fullcalendar';
 import { EventService } from '../../services/event-service/event.service';
 
 import { Event } from './../../models/event/event';
+
+//provider
+import { AuthService } from '../../services/auth-service/auth.service';
 
 @Component({
   selector: 'app-events-page',
@@ -13,34 +13,33 @@ import { Event } from './../../models/event/event';
   styleUrls: ['./events-page.component.css']
 })
 export class EventsPageComponent implements OnInit {
-  calendarOptions: Options;
-  displayEvent: any;
-  events = null;
+
   isEventsDialogOpen:boolean = false;
-  @ViewChild(CalendarComponent) ucCalendar: CalendarComponent;
+
+  eventDocument:Event = {
+    event_name:'',
+    event_date:'',
+    event_description:'',
+    event_timestamp_post_created:'',
+    event_time_start:'',
+    event_time_end:'',
 
 
-  eventObj:Event = {
-    event_title: '',
-    event_start: ''
+    event_author_id:'',
+    event_author_photo_url:'',
+    event_author_name:'',
+    event_author_email:''
   };
 
-  constructor(protected eventService:EventService) {
+  constructor(
+    protected eventService:EventService,
+    private authService: AuthService
+    ) {
 
   }
 
   ngOnInit() {
-    this.calendarOptions = {
-      editable: true,
-      eventLimit: true,
-      selectable: true,
-      header: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'month,agendaWeek,agendaDay,listMonth'
-      },
-      events: []
-    };
+
   }
   openEventsDialog() {
     this.isEventsDialogOpen = true;
@@ -49,55 +48,31 @@ export class EventsPageComponent implements OnInit {
   closeEventsDialog() {
     this.isEventsDialogOpen = false;
     console.log(this.isEventsDialogOpen);
+    this.clearEventDocOutput();
   }
-  // onSubmitCreateEvent() {
-  //   this.newsObj.news_author_id = this.authService.userKey;
-  //   this.newsObj.news_author_photo_url = this.authService.userObj.user_photo_url;
-  //   this.newsObj.news_author_name = this.authService.userObj.user_name;
-  //   this.newsObj.news_author_email = this.authService.userObj.user_email;
+  onSubmitCreateEvent() {
+    this.eventDocument.event_author_id = this.authService.userKey;
+    this.eventDocument.event_author_photo_url = this.authService.userObj.user_photo_url;
+    this.eventDocument.event_author_name = this.authService.userObj.user_name;
+    this.eventDocument.event_author_email = this.authService.userObj.user_email;
+    console.log(this.eventDocument);
+    this.eventService.addEventDocument(this.eventDocument);
+    this.closeEventsDialog();
+  }
+  clearEventDocOutput() {
+    this.eventDocument = {
+      event_name:'',
+      event_date:'',
+      event_description:'',
+      event_timestamp_post_created:'',
+      event_time_start:'',
+      event_time_end:'',
   
-  //   this.newsService.addNewsObj(this.newsObj);
-  //   this.closeNewsDialog();
-  // }
-  // loadevents() {
-  //   this.eventService.getEvents().subscribe(data => {
-  //     this.events = data;
-  //   });
-  // }
-  // clickButton(model: any) {
-  //   this.displayEvent = model;
-  // }
-  // dayClick(model: any) {
-  //   console.log(model);
-  // }
-  // eventClick(model: any) {
-  //   model = {
-  //     event: {
-  //       id: model.event.id,
-  //       start: model.event.start,
-  //       end: model.event.end,
-  //       title: model.event.title,
-  //       allDay: model.event.allDay
-  //       // other params
-  //     },
-  //     duration: {}
-  //   }
-  //   this.displayEvent = model;
-  // }
-  // updateEvent(model: any) {
-  //   model = {
-  //     event: {
-  //       id: model.event.id,
-  //       start: model.event.start,
-  //       end: model.event.end,
-  //       title: model.event.title
-  //       // other params
-  //     },
-  //     duration: {
-  //       _data: model.duration._data
-  //     }
-  //   }
-  //   this.displayEvent = model;
-  // }
-
+  
+      event_author_id:'',
+      event_author_photo_url:'',
+      event_author_name:'',
+      event_author_email:''
+    };
+  }
 }

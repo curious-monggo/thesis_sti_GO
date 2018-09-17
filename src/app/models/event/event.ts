@@ -1,16 +1,15 @@
 export interface Event {
     key?:string;
-    //key for document, firebase
-
-    // event_id?:string;
-    //full calendar property
-    event_title?:string;
-  //  event_allDay?:string;
-    event_start?:string;
-    // event_end?:string
-
-    //url?:string;
-    //optional
-
-
+    event_name?:string;
+    event_date?:string;
+    event_description?:string;
+    event_timestamp_post_created:any;
+    
+    event_time_start?:string;
+    event_time_end?:string;
+    //event author
+    event_author_id?:string;
+    event_author_photo_url?:string;
+    event_author_name?:string;
+    event_author_email?:string;
 }

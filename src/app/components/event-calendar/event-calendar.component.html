@@ -1,0 +1,5 @@
+<input type="button" (click)="load()" value="load"/>
+
+<div *ngIf="calendarOptions">
+    <ng-fullcalendar #ucCalendar [options]="calendarOptions" [(eventsModel)]="test"></ng-fullcalendar>
+</div>

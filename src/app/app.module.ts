@@ -37,9 +37,10 @@ import { UsersPageComponent } from './pages/users-page/users-page.component';
 import { UsersItemComponent } from './components/users-item/users-item.component';
 import { EventsPageComponent } from './pages/events-page/events-page.component';
 
-//full calendar
-import { FullCalendarModule } from 'ng-fullcalendar';
 
+import { EventCalendarComponent } from './components/event-calendar/event-calendar.component';
+
+import { FullCalendarModule } from 'ng-fullcalendar';
 
   const appRoutes: Routes = [
     {
@@ -89,7 +90,10 @@ import { FullCalendarModule } from 'ng-fullcalendar';
     UserPageComponent,
     UsersPageComponent,
     UsersItemComponent,
-    EventsPageComponent
+    EventsPageComponent,
+    EventCalendarComponent,
+    
+
   ],
   imports: [
     BrowserModule,
@@ -100,6 +104,7 @@ import { FullCalendarModule } from 'ng-fullcalendar';
     AngularFireAuthModule, // imports firebase/auth, only needed for auth features,
     AngularFireStorageModule, // imports firebase/storage only needed for storage features
     FullCalendarModule
+
   ],
   providers: [AuthService, AngularFireDatabase, NewsCardComponent, ProgramsCardComponent],
   bootstrap: [AppComponent]
