@@ -1,0 +1,39 @@
+<!--
+  Generated template for the EventDetailPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar color="googleWhite">
+    <ion-title>Event Detail Page</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+  <div>
+    <img class="img" src="https://www.sti.edu/img/banners/tourism.jpg" />
+    <div padding-left>
+
+      <h3 class="title">Event</h3>
+
+      <div class="grey">
+        <ion-icon name="time"></ion-icon>
+        <label>Event name</label>
+      </div>
+      <div class="grey">
+        <ion-icon name="pin"></ion-icon>
+        <label>H. Mendoza</label>
+      </div>
+      <!-- <p class="content">{{ newsDocument.news_content }}</p> -->
+      <button ion-button color="primary" (click)="hostAttendance()">Attendance Host</button>
+      <button ion-button color="secondary" (click)="signForAttendance()">Sign for attendance</button>
+    </div>
+  </div>
+  <ion-fab bottom right padding>
+      <button (click)="openAttendancePage()" ion-fab><ion-icon name="create"></ion-icon></button>
+    </ion-fab>
+</ion-content>

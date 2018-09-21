@@ -1,112 +1,95 @@
-
-import { AngularFireDatabase } from 'angularfire2/database';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
+import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
+import { SplashScreen } from '@ionic-native/splash-screen';
+import { StatusBar } from '@ionic-native/status-bar';
 
+import { MyApp } from './app.component';
 
-
-//components
-import { AppComponent } from './app.component';
-import { NewsCardComponent } from './components/news-card/news-card.component';
-import { LoginPageComponent } from './pages/login-page/login-page.component';
-import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
-import { NewsPageComponent } from './pages/news-page/news-page.component';
-import { ProgramsPageComponent } from './pages/programs-page/programs-page.component';
-import { ProgramsCardComponent } from './components/programs-card/programs-card.component';
-
-//Routes
-import { RouterModule, Routes} from '@angular/router';
-import { NavbarComponent } from './components/navbar/navbar.component';
-
-//angularFire
-import { environment } from './../environments/environment';
+//auth db cloud-functions
 import { AngularFireModule } from 'angularfire2';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
-import { AngularFireStorageModule } from 'angularfire2/storage';
+import { AngularFirestore } from 'angularfire2/firestore';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 
+import { AngularFireFunctionsModule } from '@angular/fire/functions';
 
-//services
-import { AuthService } from './services/auth-service/auth.service';
+import { NewsProvider } from '../providers/news/news';
+import { CourseProvider } from '../providers/course/course';
+import { StrandProvider } from '../providers/strand/strand';
 
-
-//Form
-import { FormsModule } from '@angular/forms';
-import { UserPageComponent } from './pages/user-page/user-page.component';
-import { UsersPageComponent } from './pages/users-page/users-page.component';
-import { UsersItemComponent } from './components/users-item/users-item.component';
-import { EventsPageComponent } from './pages/events-page/events-page.component';
-
-
-import { EventCalendarComponent } from './components/event-calendar/event-calendar.component';
-
-import { FullCalendarModule } from 'ng-fullcalendar';
-
-  const appRoutes: Routes = [
-    {
-      path:'',
-      redirectTo: '/login',
-      pathMatch: 'full'
-    },
-    {
-      path: 'login',
-      component: LoginPageComponent
-    },
-    {
-      path: 'news',
-      component: NewsPageComponent
-    },
-    {
-      path: 'events',
-      component: EventsPageComponent
-    },
-    {
-      path: 'programs',
-      component: ProgramsPageComponent
-    },
-    {
-      path: 'users',
-      component: UsersPageComponent
-    },
-    {
-      path: '**',
-      component: PageNotFoundComponent,
-      pathMatch: 'full'
-    }
-  ];
+//notification
+import { Firebase } from '@ionic-native/firebase';
+//browser
+// import { InAppBrowser } from '@ionic-native/in-app-browser'
+import { RegistrationCodeProvider } from '../providers/registration-code/registration-code';
+import { EventProvider } from '../providers/event/event';
+import { HotspotProvider } from '../providers/hotspot/hotspot';
+import { AttendanceProvider } from '../providers/attendance/attendance';
 
 
-  
+import { Facebook } from '@ionic-native/facebook';
+// import {Facebook} from 'cordova-plugin-facebook4'
+// import { GooglePlus } from '@ionic-native/google-plus';
+import { Hotspot } from '@ionic-native/hotspot';
+import { AuthProvider } from '../providers/auth/auth';
+import { FcmProvider } from '../providers/fcm/fcm';
+
+//hotspot
+//import { Hotspot } from '@ionic-native/hotspot';
+
+export const firebaseConfig = {
+  apiKey: "AIzaSyD6Rg5ux3fQi3OrwrWCHAEipaxrk3hB7EY",
+  authDomain: "stigo-6d063.firebaseapp.com",
+  databaseURL: "https://stigo-6d063.firebaseio.com",
+  projectId: "stigo-6d063",
+  storageBucket: "stigo-6d063.appspot.com",
+  messagingSenderId: "510666125923"
+};
+
 @NgModule({
   declarations: [
-    AppComponent,
-    LoginPageComponent,
-    PageNotFoundComponent,
-    NewsPageComponent,
-    NavbarComponent,
-    NewsCardComponent,
-    ProgramsPageComponent,
-    ProgramsCardComponent,
-    UserPageComponent,
-    UsersPageComponent,
-    UsersItemComponent,
-    EventsPageComponent,
-    EventCalendarComponent,
-    
-
+    MyApp
   ],
   imports: [
     BrowserModule,
-    RouterModule.forRoot(appRoutes),
-    FormsModule, 
-    AngularFireModule.initializeApp(environment.firebaseConfig, 'stiGoDashboard'),
-    AngularFirestoreModule, // imports firebase/firestore, only needed for database features
-    AngularFireAuthModule, // imports firebase/auth, only needed for auth features,
-    AngularFireStorageModule, // imports firebase/storage only needed for storage features
-    FullCalendarModule
-
+    IonicModule.forRoot(MyApp, {
+      // Tabs config
+      tabsHideOnSubPages: true,
+  }),
+    AngularFireModule.initializeApp(firebaseConfig),
+    AngularFirestoreModule.enablePersistence(),
+    AngularFireAuthModule,
+    AngularFireFunctionsModule
   ],
-  providers: [AuthService, AngularFireDatabase, NewsCardComponent, ProgramsCardComponent],
-  bootstrap: [AppComponent]
+  bootstrap: [IonicApp],
+  entryComponents: [
+    MyApp
+  ],
+  providers: [
+    StatusBar,
+    SplashScreen,
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    //database
+    AngularFirestore,
+    Firebase,
+    //data
+    NewsProvider,
+    CourseProvider,
+    StrandProvider,
+    RegistrationCodeProvider,
+    EventProvider,
+    HotspotProvider,
+    AttendanceProvider,
+    //to be removed
+    // InAppBrowser,
+    //device function
+    Hotspot,
+    //signin
+    Facebook,
+    // GooglePlus,
+    AuthProvider,
+    FcmProvider
+  ]
 })
-export class AppModule { }
+export class AppModule {}
